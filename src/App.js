@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router";
-import "./App.css";
+import Header from "./component/Header";
 import Category from "./pages/Category";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
@@ -14,6 +14,7 @@ import SignUp from "./pages/SignUp";
 function App() {
   return (
     <>
+      <Header />
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/profile' element={<Profile />} />
