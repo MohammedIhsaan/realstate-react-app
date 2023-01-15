@@ -1,9 +1,17 @@
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import OAuth from "../component/OAuth";
+import { db } from "../firebase";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +30,27 @@ const SignUp = () => {
   }
   async function onSubmit(e) {
     e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      updateProfile(auth.currentUser, { displayName: name });
+      const user = userCredential.user;
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+      toast.success("Sign Up is successful Please Sign in to continue");
+      navigate("/sign-in");
+    } catch (error) {
+      const errorCode = error.code;
+      const err = errorCode.split("/")[1];
+      toast.error(err);
+    }
   }
   return (
     <section>
