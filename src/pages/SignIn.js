@@ -3,8 +3,13 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import OAuth from "../component/OAuth";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { db } from "../firebase";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,14 +29,17 @@ const SignIn = () => {
     e.preventDefault();
     try {
       const auth = getAuth();
-      const userCridential = await createUserWithEmailAndPassword(
+      const userCridential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
       console.log(userCridential);
-    } catch (err) {
-      console.log(err);
+      userCridential.user && navigate("/");
+    } catch (error) {
+      const errorCode = error.code;
+      const err = errorCode.split("/")[1];
+      toast.error(err);
     }
   }
   return (
