@@ -15,6 +15,7 @@ const OAuth = () => {
       const provider = new GoogleAuthProvider();
       const response = await signInWithPopup(auth, provider);
       const user = response.user;
+      console.log(user);
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
@@ -24,7 +25,7 @@ const OAuth = () => {
           timestamp: serverTimestamp(),
         });
       }
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       const codeError = error.code;
       console.log(error);
